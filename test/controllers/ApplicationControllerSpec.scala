@@ -4,12 +4,16 @@ import baseSpec.BaseSpecWithApplication
 import play.api.test.FakeRequest
 import play.api.http.Status
 import play.api.test.Helpers._
+import org.mockito.Mockito._
+import repositories.DataRepository
 
 class ApplicationControllerSpec extends BaseSpecWithApplication {
 
+  val mockDataRepository: DataRepository = mock[DataRepository]
+
   val TestApplicationController = new ApplicationController(
-    component
-  )
+    component, mockDataRepository
+  )(executionContext)
 
   "ApplicationController .index" should {
 

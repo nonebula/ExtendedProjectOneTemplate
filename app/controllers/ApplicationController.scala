@@ -1,12 +1,14 @@
 package controllers
 
 import play.api.mvc.{BaseController, ControllerComponents, Results}
+import repositories.DataRepository
 
 import javax.inject.{Inject, Singleton}
+import scala.concurrent.ExecutionContext
 
 
 @Singleton
-class ApplicationController @Inject()(val controllerComponents: ControllerComponents) extends BaseController {
+class ApplicationController @Inject()(val controllerComponents: ControllerComponents, val dataRepository: DataRepository)(implicit val ec: ExecutionContext) extends BaseController {
 
   def index() = Action {
     Results.Ok("This is a placeholder response for index - 200 OK")
