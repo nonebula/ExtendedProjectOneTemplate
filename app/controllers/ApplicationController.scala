@@ -1,6 +1,6 @@
 package controllers
 
-import play.api.mvc.{BaseController, ControllerComponents}
+import play.api.mvc.{BaseController, ControllerComponents, Results}
 
 import javax.inject.{Inject, Singleton}
 
@@ -8,7 +8,9 @@ import javax.inject.{Inject, Singleton}
 @Singleton
 class ApplicationController @Inject()(val controllerComponents: ControllerComponents) extends BaseController {
 
-  def index() = TODO
+  def index() = Action {
+    Results.Ok("This is a placeholder response for index - 200 OK")
+  }
 
   def create() = TODO
 
