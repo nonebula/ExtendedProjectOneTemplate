@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 [info] downloading https://repo1.maven.org/maven2/org/mongodb/scala/mongo-scala-driver_2.13/4.5.0/mongo-scala-driver_2.13-4.5.0-sources.jar
 [info] downloading https://repo1.maven.org/maven2/org/mongodb/mongodb-driver-core/4.5.0/mongodb-driver-core-4.5.0-sources.jar
 [info] downloading https://repo1.maven.org/maven2/org/scalamock/scalamock_2.13/5.2.0/scalamock_2.13-5.2.0-sources.jar
@@ -819,3 +820,31 @@
 [info] downloaded https://repo1.maven.org/maven2/com/google/guava/listenablefuture/9999.0-empty-to-avoid-conflict-with-guava/listenablefuture-9999.0-empty-to-avoid-conflict-with-guava-sources.jar.sha1
 [info] downloaded https://repo1.maven.org/maven2/net/sourceforge/htmlunit/htmlunit-core-js/2.36.0/htmlunit-core-js-2.36.0-sources.jar
 >>>>>>> e5100a82e9a46bb770a753875b19bb5100036c1b
+=======
+[info] downloading https://repo1.maven.org/maven2/com/typesafe/play/play-json_2.13/2.9.4/play-json_2.13-2.9.4.pom
+[info] downloading https://repo1.maven.org/maven2/com/typesafe/play/play_2.13/2.8.16/play_2.13-2.8.16.pom
+[info] downloaded https://repo1.maven.org/maven2/com/typesafe/play/play_2.13/2.8.16/play_2.13-2.8.16.pom
+[info] downloaded https://repo1.maven.org/maven2/com/typesafe/play/play-json_2.13/2.9.4/play-json_2.13-2.9.4.pom
+[info] downloading https://repo1.maven.org/maven2/com/typesafe/akka/akka-serialization-jackson_2.13/2.6.19/akka-serialization-jackson_2.13-2.6.19.pom
+[info] downloading https://repo1.maven.org/maven2/com/typesafe/akka/akka-actor_2.13/2.6.19/akka-actor_2.13-2.6.19.pom
+[info] downloading https://repo1.maven.org/maven2/com/typesafe/play/build-link/2.8.16/build-link-2.8.16.pom
+[info] downloading https://repo1.maven.org/maven2/com/typesafe/akka/akka-actor-typed_2.13/2.6.19/akka-actor-typed_2.13-2.6.19.pom
+[info] downloading https://repo1.maven.org/maven2/com/typesafe/play/play-functional_2.13/2.9.4/play-functional_2.13-2.9.4.pom
+[info] downloading https://repo1.maven.org/maven2/com/typesafe/akka/akka-slf4j_2.13/2.6.19/akka-slf4j_2.13-2.6.19.pom
+[info] downloaded https://repo1.maven.org/maven2/com/typesafe/akka/akka-serialization-jackson_2.13/2.6.19/akka-serialization-jackson_2.13-2.6.19.pom
+[info] downloaded https://repo1.maven.org/maven2/com/typesafe/play/build-link/2.8.16/build-link-2.8.16.pom
+[info] downloaded https://repo1.maven.org/maven2/com/typesafe/akka/akka-actor-typed_2.13/2.6.19/akka-actor-typed_2.13-2.6.19.pom
+[info] downloaded https://repo1.maven.org/maven2/com/typesafe/akka/akka-slf4j_2.13/2.6.19/akka-slf4j_2.13-2.6.19.pom
+[info] downloaded https://repo1.maven.org/maven2/com/typesafe/play/play-functional_2.13/2.9.4/play-functional_2.13-2.9.4.pom
+[info] downloaded https://repo1.maven.org/maven2/com/typesafe/akka/akka-actor_2.13/2.6.19/akka-actor_2.13-2.6.19.pom
+[info] downloading https://repo1.maven.org/maven2/com/typesafe/play/play-exceptions/2.8.16/play-exceptions-2.8.16.pom
+[info] downloaded https://repo1.maven.org/maven2/com/typesafe/play/play-exceptions/2.8.16/play-exceptions-2.8.16.pom
+[info] downloading https://repo1.maven.org/maven2/com/typesafe/play/play-json_2.13/2.9.4/play-json_2.13-2.9.4.jar
+[info] downloading https://repo1.maven.org/maven2/com/typesafe/play/play-functional_2.13/2.9.4/play-functional_2.13-2.9.4.jar
+[info] downloaded https://repo1.maven.org/maven2/com/typesafe/play/play-json_2.13/2.9.4/play-json_2.13-2.9.4.jar
+[info] downloaded https://repo1.maven.org/maven2/com/typesafe/play/play-functional_2.13/2.9.4/play-functional_2.13-2.9.4.jar
+[info] downloading https://repo1.maven.org/maven2/com/typesafe/play/play-json_2.13/2.9.4/play-json_2.13-2.9.4-sources.jar
+[info] downloading https://repo1.maven.org/maven2/com/typesafe/play/play-functional_2.13/2.9.4/play-functional_2.13-2.9.4-sources.jar
+[info] downloaded https://repo1.maven.org/maven2/com/typesafe/play/play-json_2.13/2.9.4/play-json_2.13-2.9.4-sources.jar
+[info] downloaded https://repo1.maven.org/maven2/com/typesafe/play/play-functional_2.13/2.9.4/play-functional_2.13-2.9.4-sources.jar
+>>>>>>> 95222fbcf1884a7383061c76f09f60f2e71eac15
