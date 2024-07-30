@@ -2,7 +2,7 @@ package controllers
 
 import models.DataModel
 import play.api.libs.json.{JsError, JsSuccess, JsValue, Json}
-import play.api.mvc.{Action, AnyContent, BaseController, ControllerComponents, Results}
+import play.api.mvc.{Action, AnyContent, BaseController, ControllerComponents}
 import repositories.DataRepository
 
 import javax.inject.{Inject, Singleton}
