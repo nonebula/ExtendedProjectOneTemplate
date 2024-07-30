@@ -5,20 +5,20 @@ import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model.Filters.empty
 import org.mongodb.scala.model._
 import org.mongodb.scala.result
-import play.api.libs.json._
-import play.api.mvc.Results._
-import play.api.mvc._
-import play.mvc.Action
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
-
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
+import play.api.libs.json._
+import play.api.mvc._
+import play.api.mvc.Results._
+import play.mvc.Action
+import play.api.mvc.{Action, AnyContent}
 
 @Singleton
 class DataRepository @Inject()(
                                 mongoComponent: MongoComponent
-                              )(implicit ec: ExecutionContext) extends PlayMongoRepository[DataModel](
+                              )(implicit executionContext: ExecutionContext) extends PlayMongoRepository[DataModel](
   collectionName = "dataModels",
   mongoComponent = mongoComponent,
   domainFormat = DataModel.formats,
@@ -30,9 +30,7 @@ class DataRepository @Inject()(
 
   def index(): Action[AnyContent] = Action.async { implicit request =>
     dataRepository.index().map {
-      case Right(item: Seq[DataModel]) => Ok {
-        Json.toJson(item)
-      }
+      case Right(items) => Ok(Json.toJson(items))
       case Left(error) => Status(error)(Json.toJson("Unable to find any books"))
     }
   }
@@ -41,7 +39,7 @@ class DataRepository @Inject()(
     request.body.validate[DataModel] match {
       case JsSuccess(dataModel, _) =>
         dataRepository.create(dataModel).map(_ => Created)
-      case JsError(_) => Future(BadRequest)
+      case JsError(_) => Future.successful(BadRequest)
     }
   }
 
@@ -52,39 +50,29 @@ class DataRepository @Inject()(
 
   def read(id: String): Action[AnyContent] = Action.async { implicit request =>
     dataRepository.read(id).map {
-      case Right(item: Seq[DataModel]) => Ok {
-        Json.toJson(item)
-      }
-      case Left(error) => NotFound(error)(Json.toJson("Unable to find this book"))
+      case Some(dataModel) => Ok(Json.toJson(dataModel))
+      case None => NotFound(Json.toJson("Unable to find this item"))
+    }.recover {
+      case _ => InternalServerError(Json.toJson("Error occurred"))
     }
   }
-
-  //      collection.find(byID(id)).headOption flatMap {
-  //      case Some(data) =>
-  //        Future(data)
-  //    }
 
   def update(id: String): Action[JsValue] = Action.async(parse.json) { implicit request =>
     request.body.validate[DataModel] match {
-      case JsSuccess(updatedDataModel, _) => dataRepository.update(id, updatedDataModel).map {
-        case true => Accepted(Json.toJson(updatedDataModel))
-        case false => NotFound(Json.toJson("Item not found"))
-      }
-      case JSError(errors) =>
-        Future.successful((BadRequest(Json.toJson(("Invalid data format")))
+      case JsSuccess(updatedDataModel, _) =>
+        dataRepository.update(id, updatedDataModel).map { result =>
+          if (result.getModifiedCount > 0) Accepted(Json.toJson(updatedDataModel))
+          else NotFound(Json.toJson("Item not found"))
+        }
+      case JsError(_) =>
+        Future.successful(BadRequest(Json.toJson("Invalid data format")))
     }
   }
-//    }result.UpdateResult] =
-//    collection.replaceOne(
-//      filter = byID(id),
-//      replacement = book,
-//      options = new ReplaceOptions().upsert(true) //What happens when we set this to false?
-//    ).toFuture()
 
   def delete(id: String): Action[AnyContent] = Action.async { implicit request =>
-    dataRepository.delete(id).map {
-      case result if result.deletedCount > 0 => NoContent
-      case _ => NotFound(Json.toJson("Item not found"))
+    dataRepository.delete(id).map { result =>
+      if (result.getDeletedCount > 0) NoContent
+      else NotFound(Json.toJson("Item not found"))
     }
   }
 
