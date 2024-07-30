@@ -29,31 +29,55 @@ class ApplicationControllerSpec extends BaseSpecWithApplication {
   )
 
   "ApplicationController .create" should {
-
     "create a book in the database" in {
-
       val request: FakeRequest[JsValue] = buildPost("/api").withBody[JsValue](Json.toJson(dataModel))
       val createdResult: Future[Result] = TestApplicationController.create()(request)
-
       status(createdResult) shouldBe Status.???
     }
   }
 
+  //Make a bad request too
+
+
   "ApplicationController .read" should {
-
     "find a book in the database by id" in {
-
       val request: FakeRequest[JsValue] = buildGet("/api/${dataModel._id}").withBody[JsValue](Json.toJson(dataModel))
       val createdResult: Future[Result] = TestApplicationController.create()(request)
-
       //Hint: You could use status(createdResult) shouldBe Status.CREATED to check this has worked again
-
       val readResult: Future[Result] = TestApplicationController.read("abcd")(FakeRequest())
-
       status(readResult) shouldBe ???
       contentAsJson(readResult).as[???] shouldBe ???
     }
   }
+
+  //Make a bad request too
+
+
+  "ApplicationController .update" should {
+    "update a book in the database" in {
+      // Create the initial data
+      // Check the creation status
+      // Update the data
+      // Check the update status
+      // Verify the updated data
+    }
+  }
+
+  //Make a bad request too
+
+
+  "ApplicationController .delete" should {
+    "delete a book in the database" in {
+      // Create the initial data
+      // Check the creation status
+      // Delete the data
+      // Check the delete status
+      // Verify the data is deleted
+    }
+  }
+
+  //Make a bad request too
+
 
   //  "test name" should {
   //    "do something" in {
