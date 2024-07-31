@@ -1,12 +1,2 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
 [0m[[0m[0mdebug[0m] [0m[0mCreated transactional ClassFileManager with tempDir = /Users/joe.higgs/Documents/Training/ExtendedProjectOneTemplate/project/target/scala-2.12/sbt-1.0/classes.bak[0m
 [0m[[0m[0mdebug[0m] [0m[0mRemoving the temporary directory used for backing up class files: /Users/joe.higgs/Documents/Training/ExtendedProjectOneTemplate/project/target/scala-2.12/sbt-1.0/classes.bak[0m
-=======
-[debug] Created transactional ClassFileManager with tempDir = /Users/jamie.letts/Documents/Scala Learning/Project One/ExtendedProjectOneTemplate/project/target/scala-2.12/sbt-1.0/classes.bak
-[debug] Removing the temporary directory used for backing up class files: /Users/jamie.letts/Documents/Scala Learning/Project One/ExtendedProjectOneTemplate/project/target/scala-2.12/sbt-1.0/classes.bak
->>>>>>> e5100a82e9a46bb770a753875b19bb5100036c1b
-=======
-[debug] Created transactional ClassFileManager with tempDir = /Users/joe.higgs/Documents/Training/ExtendedProjectOneTemplate/project/target/scala-2.12/sbt-1.0/classes.bak
-[debug] Removing the temporary directory used for backing up class files: /Users/joe.higgs/Documents/Training/ExtendedProjectOneTemplate/project/target/scala-2.12/sbt-1.0/classes.bak
->>>>>>> 95222fbcf1884a7383061c76f09f60f2e71eac15
