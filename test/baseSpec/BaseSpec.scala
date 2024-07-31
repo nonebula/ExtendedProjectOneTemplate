@@ -1,7 +1,7 @@
 package baseSpec
 
 import akka.stream.Materializer
-import com.google.inject.matcher.Matchers
+//import com.google.inject.matcher.Matchers
 import org.scalatest.concurrent.{Eventually, ScalaFutures}
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec
@@ -15,6 +15,7 @@ import play.api.mvc.{AnyContentAsEmpty, MessagesControllerComponents}
 import play.api.test.CSRFTokenHelper.CSRFFRequestHeader
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{GET, POST}
+import repositories.DataRepository
 
 import scala.concurrent.ExecutionContext
 
@@ -26,7 +27,7 @@ trait BaseSpecWithApplication extends BaseSpec with GuiceOneServerPerSuite with 
   implicit val executionContext: ExecutionContext = app.injector.instanceOf[ExecutionContext]
 
   lazy val component: MessagesControllerComponents = injector.instanceOf[MessagesControllerComponents]
-  //lazy val repository: DataRepository = injector.instanceOf[DataRepository]
+  lazy val repository: DataRepository = injector.instanceOf[DataRepository]
   //lazy val service: LibraryService = injector.instanceOf[LibraryService]
   //lazy val connector: LibraryConnector = injector.instanceOf[LibraryConnector]
 
@@ -36,7 +37,7 @@ trait BaseSpecWithApplication extends BaseSpec with GuiceOneServerPerSuite with 
   override def fakeApplication(): Application =
     new GuiceApplicationBuilder()
       .configure(Map(
-        "mongodb.uri"                                    -> "mongodb://localhost:27017/play-template"
+        "mongodb.uri" -> "mongodb://localhost:27017/play-template"
       ))
       .build()
 
