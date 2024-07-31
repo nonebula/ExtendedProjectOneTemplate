@@ -51,8 +51,7 @@ class ApplicationController @Inject()(val controllerComponents: ControllerCompon
           case false =>
             NotFound(Json.toJson("Item not found"))
         }
-      case JsError(errors) =>
-        Future.successful(BadRequest(Json.toJson("Invalid data format")))
+      case JsError(_) => Future(BadRequest)
     }
   }
 
