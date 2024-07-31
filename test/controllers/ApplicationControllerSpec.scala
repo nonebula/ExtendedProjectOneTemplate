@@ -37,6 +37,7 @@ class ApplicationControllerSpec extends BaseSpecWithApplication {
       val request: FakeRequest[JsValue] = buildPost("/api").withBody[JsValue](Json.toJson(dataModel))
       val createdResult: Future[Result] = TestApplicationController.create()(request)
 
+
       status(createdResult) shouldBe Status.CREATED
 
       afterEach()
@@ -115,5 +116,4 @@ class ApplicationControllerSpec extends BaseSpecWithApplication {
   override def beforeEach(): Unit = await(repository.deleteAll())
 
   override def afterEach(): Unit = await(repository.deleteAll())
-
 }
