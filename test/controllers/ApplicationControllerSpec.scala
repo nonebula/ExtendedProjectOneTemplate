@@ -107,11 +107,59 @@ class ApplicationControllerSpec extends BaseSpecWithApplication {
 
       status(deletedResult) shouldBe ACCEPTED
 
+      status(readResult) shouldBe OK
+      contentAsJson(readResult).as[JsValue] shouldBe Json.toJson(dataModel)
+
       afterEach()
     }
   }
 
   //Make a bad request too
+
+
+
+  //Make a bad request too
+  "ApplicationController .update" should {
+    "update a book in the database" in {
+      beforeEach()
+
+      val request: FakeRequest[JsValue] = buildPost("/api").withBody[JsValue](Json.toJson(dataModel))
+      val createdResult: Future[Result] = TestApplicationController.create()(request)
+      status(createdResult) shouldBe Status.CREATED
+
+      val updatedDataModel: DataModel = dataModel.copy(name = "Updated Name")
+      val updatedRequest: FakeRequest[JsValue] = buildPut("/api/${dataModel._id}").withBody[JsValue](Json.toJson(updatedDataModel))
+      val updatedResult: Future[Result] = TestApplicationController.update(dataModel._id)(updatedRequest)
+
+      status(updatedResult) shouldBe ACCEPTED
+
+      val readResult: Future[Result] = TestApplicationController.read(dataModel._id)(FakeRequest())
+      status(readResult) shouldBe OK
+      contentAsJson(readResult).as[JsValue] shouldBe Json.toJson(updatedDataModel)
+
+      afterEach()
+    }
+  }
+
+  "ApplicationController .delete" should {
+    "delete a book in the database" in {
+      beforeEach()
+      val request: FakeRequest[JsValue] = buildPost("/api").withBody[JsValue](Json.toJson(dataModel))
+      val createdResult: Future[Result] = TestApplicationController.create()(request)
+
+      status(createdResult) shouldBe CREATED
+
+      val deleteRequest: FakeRequest[AnyContent] = buildDelete("/api/${dataModel._id}")
+      val deletedResult: Future[Result] = TestApplicationController.delete(dataModel._id)(deleteRequest)
+
+      status(deletedResult) shouldBe ACCEPTED
+
+      afterEach()
+    }
+  }
+
+  //Make a bad request too
+
 
 
   override def beforeEach(): Unit = await(repository.deleteAll())
