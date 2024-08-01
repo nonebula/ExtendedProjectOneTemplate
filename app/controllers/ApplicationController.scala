@@ -1,7 +1,7 @@
 package controllers
 
 import com.mongodb.client.result.UpdateResult
-import models.DataModel
+import models.{DataModel, GoogleBook}
 import play.api.libs.json.{JsError, JsSuccess, JsValue, Json}
 import play.api.mvc.{Action, AnyContent, BaseController, ControllerComponents, Result}
 import repositories.DataRepository
@@ -58,11 +58,11 @@ class ApplicationController @Inject()(val dataRepository: DataRepository, val co
     }
   }
 
-  //Add the corresponding method to your controller, it's common practice naming the controller method the same as/similar to the service method
   // Fill in the missing implementation to return a Ok response, along with a Json body containing the book we found.
   def getGoogleBook(search: String, term: String): Action[AnyContent] = Action.async { implicit request =>
     libraryService.getGoogleBook(search = search, term = term).map {
-      ???
+      case Some(book) => Ok(Json.toJson(book))
+      case None => NotFound(Json.toJson("Book not found"))
     }
   }
 }
