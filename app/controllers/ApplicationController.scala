@@ -16,10 +16,11 @@ class ApplicationController @Inject()(val dataRepository: DataRepository, val co
 
   def index(): Action[AnyContent] = Action.async { implicit request =>
     dataRepository.index().map {
-      case Right(item: Seq[DataModel]) => Ok {
-        Json.toJson(item)
-      }
-      case Left(error) => Status(error)(Json.toJson("Unable to find any books"))
+      case Right(item: Seq[DataModel]) => Ok(Json.toJson(item))
+      case Left(error: APIError.BadAPIResponse) =>
+        Status(error.httpResponseStatus)(Json.toJson(error.reason))
+      case Left(_) =>
+        InternalServerError(Json.toJson("Unable to find any books"))
     }
   }
 

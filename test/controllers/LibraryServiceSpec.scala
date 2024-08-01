@@ -1,8 +1,9 @@
 package controllers
 
 import baseSpec.BaseSpec
+import cats.data.EitherT
 import connectors.LibraryConnector
-import models.{DataModel, GoogleBook}
+import models.{APIError, DataModel, GoogleBook}
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
@@ -30,29 +31,29 @@ class LibraryServiceSpec extends BaseSpec with MockFactory with ScalaFutures wit
 
 
   //  Okay, back to the testing, go ahead and make the "return a book" and "return an error" tests pass in LibraryServiceSpec, this should only require small changes).
-  
+
   "getGoogleBook" should {
     val url: String = "testUrl"
 
     "return a book" in {
       (mockConnector.get[DataModel](_: String)(_: OFormat[DataModel], _: ExecutionContext))
         .expects(url, *, *)
-        .returning(Future(gameOfThrones.as[DataModel]))
+        .returning(EitherT.rightT(Future(gameOfThrones.as[DataModel])))
         .once()
       //.value removed between ) and ) below
-      whenReady(testService.getGoogleBook(urlOverride = Some(url), search = "", term = "")) { result =>
-        result shouldBe Some(GoogleBook("someId", "A Game of Thrones", "The best book!!!", 100))
+      whenReady(testService.getGoogleBook(urlOverride = Some(url), search = "", term = "").value) { result =>
+        result shouldBe Right(GoogleBook("someId", "A Game of Thrones", "The best book!!!", 100))
       }
     }
 
     "return an error" in {
       (mockConnector.get[DataModel](_: String)(_: OFormat[DataModel], _: ExecutionContext))
         .expects(url, *, *)
-        .returning(Future.failed(new RuntimeException))
+        .returning(EitherT.leftT(Future.failed(new RuntimeException)))
         .once()
 
-      whenReady(testService.getGoogleBook(urlOverride = Some(url), search = "", term = "")) { result =>
-        result shouldBe a[RuntimeException]
+      whenReady(testService.getGoogleBook(urlOverride = Some(url), search = "", term = "").value) { result =>
+        result shouldBe Left(APIError.BadAPIResponse(500, "Test exception"))
       }
     }
   }
