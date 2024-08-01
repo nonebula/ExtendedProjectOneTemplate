@@ -11,7 +11,7 @@ import play.api.libs.json.OFormat.oFormatFromReadsAndOWrites
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{AnyContent, BaseController, ControllerComponents, Result}
 import repositories._
-
+import services._
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -19,7 +19,8 @@ class ApplicationControllerSpec extends BaseSpecWithApplication {
 
   val TestApplicationController = new ApplicationController(
     repository,
-    component
+    component,
+    libraryService
   )(executionContext)
 
   private val dataModel: DataModel = DataModel(
@@ -34,16 +35,14 @@ class ApplicationControllerSpec extends BaseSpecWithApplication {
     "create a book in the database" in {
       beforeEach()
 
-      val request: FakeRequest[JsValue] = buildPost("/api").withBody[JsValue](Json.toJson(dataModel))
+      val request: FakeRequest[JsValue] = buildPost("/api").withBody(Json.toJson(dataModel))
       val createdResult: Future[Result] = TestApplicationController.create()(request)
-
 
       status(createdResult) shouldBe Status.CREATED
 
       afterEach()
     }
   }
-
 
   //Make a bad request too
 
@@ -53,12 +52,60 @@ class ApplicationControllerSpec extends BaseSpecWithApplication {
     "find a book in the database by id" in {
       beforeEach()
 
-      val request: FakeRequest[JsValue] = buildGet("/api/${dataModel._id}").withBody[JsValue](Json.toJson(dataModel))
+      val request: FakeRequest[JsValue] = buildGet(s"/api/${dataModel._id}").withBody(Json.toJson(dataModel))
       val createdResult: Future[Result] = TestApplicationController.create()(request)
-
       status(createdResult) shouldBe Status.CREATED
 
-      val readResult: Future[Result] = TestApplicationController.read("abcd")(FakeRequest())
+      val readResult: Future[Result] = TestApplicationController.read(dataModel._id)(FakeRequest())
+
+      status(readResult) shouldBe OK
+      contentAsJson(readResult) shouldBe Json.toJson(dataModel)
+
+      afterEach()
+    }
+  }
+
+
+  //Make a bad request too
+
+
+  "ApplicationController .update" should {
+    "update a book in the database" in {
+      beforeEach()
+
+      val request: FakeRequest[JsValue] = buildPost("/api").withBody(Json.toJson(dataModel))
+      val createdResult: Future[Result] = TestApplicationController.create()(request)
+      status(createdResult) shouldBe Status.CREATED
+
+      val updatedDataModel: DataModel = dataModel.copy(name = "Updated Name")
+      val updatedRequest: FakeRequest[JsValue] = buildPut(s"/api/${dataModel._id}").withBody(Json.toJson(updatedDataModel))
+      val updatedResult: Future[Result] = TestApplicationController.update(dataModel._id)(updatedRequest)
+
+      status(updatedResult) shouldBe ACCEPTED
+
+      val readResult: Future[Result] = TestApplicationController.read(dataModel._id)(FakeRequest())
+      status(readResult) shouldBe OK
+      contentAsJson(readResult) shouldBe Json.toJson(updatedDataModel)
+
+      afterEach()
+    }
+  }
+
+  //Make a bad request too
+
+
+  "ApplicationController .delete" should {
+    "delete a book in the database" in {
+      beforeEach()
+      val request: FakeRequest[JsValue] = buildPost("/api").withBody(Json.toJson(dataModel))
+      val createdResult: Future[Result] = TestApplicationController.create()(request)
+
+      status(createdResult) shouldBe CREATED
+
+      val deleteRequest: FakeRequest[AnyContent] = buildDelete(s"/api/${dataModel._id}")
+      val deletedResult: Future[Result] = TestApplicationController.delete(dataModel._id)(deleteRequest)
+
+      status(deletedResult) shouldBe ACCEPTED
 
       status(readResult) shouldBe OK
       contentAsJson(readResult).as[JsValue] shouldBe Json.toJson(dataModel)
@@ -68,6 +115,7 @@ class ApplicationControllerSpec extends BaseSpecWithApplication {
   }
 
   //Make a bad request too
+
 
 
   //Make a bad request too
@@ -111,6 +159,7 @@ class ApplicationControllerSpec extends BaseSpecWithApplication {
   }
 
   //Make a bad request too
+
 
 
   override def beforeEach(): Unit = await(repository.deleteAll())

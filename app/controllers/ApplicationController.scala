@@ -1,17 +1,18 @@
 package controllers
 
 import com.mongodb.client.result.UpdateResult
-import models.DataModel
+import models.{DataModel, GoogleBook}
 import play.api.libs.json.{JsError, JsSuccess, JsValue, Json}
 import play.api.mvc.{Action, AnyContent, BaseController, ControllerComponents, Result}
 import repositories.DataRepository
+import services.LibraryService
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 
 @Singleton
-class ApplicationController @Inject()(val dataRepository: DataRepository, val controllerComponents: ControllerComponents)(implicit val ec: ExecutionContext) extends BaseController {
+class ApplicationController @Inject()(val dataRepository: DataRepository, val controllerComponents: ControllerComponents, libraryService: LibraryService)(implicit val ec: ExecutionContext) extends BaseController {
 
   def index(): Action[AnyContent] = Action.async { implicit request =>
     dataRepository.index().map {
@@ -54,6 +55,14 @@ class ApplicationController @Inject()(val dataRepository: DataRepository, val co
       }
     }.recover {
       case ex: Exception => InternalServerError(Json.toJson("Error deleting item"))
+    }
+  }
+
+  // Fill in the missing implementation to return a Ok response, along with a Json body containing the book we found.
+  def getGoogleBook(search: String, term: String): Action[AnyContent] = Action.async { implicit request =>
+    libraryService.getGoogleBook(search = search, term = term).map {
+      case Some(book) => Ok(Json.toJson(book))
+      case None => NotFound(Json.toJson("Book not found"))
     }
   }
 }
