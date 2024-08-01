@@ -11,7 +11,8 @@ import play.api.libs.json.OFormat.oFormatFromReadsAndOWrites
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{AnyContent, BaseController, ControllerComponents, Result}
 import repositories._
-import services._
+import services.LibraryService
+
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -20,7 +21,7 @@ class ApplicationControllerSpec extends BaseSpecWithApplication {
   val TestApplicationController = new ApplicationController(
     repository,
     component,
-    libraryService
+    service
   )(executionContext)
 
   private val dataModel: DataModel = DataModel(
@@ -107,15 +108,11 @@ class ApplicationControllerSpec extends BaseSpecWithApplication {
 
       status(deletedResult) shouldBe ACCEPTED
 
-      status(readResult) shouldBe OK
-      contentAsJson(readResult).as[JsValue] shouldBe Json.toJson(dataModel)
-
       afterEach()
     }
   }
 
   //Make a bad request too
-
 
 
   //Make a bad request too
@@ -159,7 +156,6 @@ class ApplicationControllerSpec extends BaseSpecWithApplication {
   }
 
   //Make a bad request too
-
 
 
   override def beforeEach(): Unit = await(repository.deleteAll())

@@ -1,7 +1,7 @@
 package controllers
 
 import com.mongodb.client.result.UpdateResult
-import models.{DataModel, GoogleBook}
+import models.{APIError, DataModel, GoogleBook}
 import play.api.libs.json.{JsError, JsSuccess, JsValue, Json}
 import play.api.mvc.{Action, AnyContent, BaseController, ControllerComponents, Result}
 import repositories.DataRepository
@@ -12,7 +12,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 
 @Singleton
-class ApplicationController @Inject()(val dataRepository: DataRepository, val controllerComponents: ControllerComponents, libraryService: LibraryService)(implicit val ec: ExecutionContext) extends BaseController {
+class ApplicationController @Inject()(val dataRepository: DataRepository, val controllerComponents: ControllerComponents, val libraryService: LibraryService)(implicit val ec: ExecutionContext) extends BaseController {
 
   def index(): Action[AnyContent] = Action.async { implicit request =>
     dataRepository.index().map {
@@ -60,11 +60,23 @@ class ApplicationController @Inject()(val dataRepository: DataRepository, val co
 
   // Fill in the missing implementation to return a Ok response, along with a Json body containing the book we found.
   def getGoogleBook(search: String, term: String): Action[AnyContent] = Action.async { implicit request =>
-    libraryService.getGoogleBook(search = search, term = term).map {
-      case Some(book) => Ok(Json.toJson(book))
-      case None => NotFound(Json.toJson("Book not found"))
+    libraryService.getGoogleBook(search = search, term = term).value.map {
+      case Right(book) => Ok(Json.toJson(book))
+      case Left(error) =>
+        error match {
+          case APIError.BadAPIResponse(_, _) =>
+            NotFound(Json.toJson("Book not found"))
+        }
     }
   }
+
+  //  def getGoogleBook(search: String, term: String): Action[AnyContent] = Action.async { implicit request =>
+  //    libraryService.getGoogleBook(search = search, term = term).map {
+  //      case Some(book) => Ok(Json.toJson(book))
+  //      case None => NotFound(Json.toJson("Book not found"))
+  //    }
+  //  }
+
 }
 
 
