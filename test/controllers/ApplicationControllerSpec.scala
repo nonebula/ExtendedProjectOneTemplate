@@ -70,6 +70,25 @@ class ApplicationControllerSpec extends BaseSpecWithApplication {
   //Make a bad request too
 
 
+  "ApplicationController .readName" should {
+
+    "find a book in the database by name" in {
+      beforeEach()
+
+      val request: FakeRequest[JsValue] = buildGet(s"/api/${dataModel._id}").withBody(Json.toJson(dataModel))
+      val createdResult: Future[Result] = TestApplicationController.create()(request)
+      status(createdResult) shouldBe Status.CREATED
+
+      val readResult: Future[Result] = TestApplicationController.readName(dataModel.name)(FakeRequest())
+
+      status(readResult) shouldBe OK
+      contentAsJson(readResult) shouldBe Json.toJson(dataModel)
+
+      afterEach()
+    }
+  }
+
+
   "ApplicationController .update" should {
     "update a book in the database" in {
       beforeEach()

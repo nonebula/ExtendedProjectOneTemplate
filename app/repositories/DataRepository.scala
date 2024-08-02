@@ -41,8 +41,17 @@ class DataRepository @Inject()(
       Filters.equal("_id", id)
     )
 
+  private def byName(name: String): Bson =
+    Filters.and(
+      Filters.equal("name", name)
+    )
+
   def read(id: String): Future[Option[DataModel]] = {
     collection.find(byID(id)).headOption
+  }
+
+  def readName(name: String): Future[Option[DataModel]] = {
+    collection.find(byName(name)).headOption
   }
 
   def update(id: String, book: DataModel): Future[result.UpdateResult] =

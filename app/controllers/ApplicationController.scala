@@ -43,6 +43,15 @@ class ApplicationController @Inject()(val dataRepository: DataRepository, val co
     }
   }
 
+  def readName(name: String): Action[AnyContent] = Action.async { implicit request =>
+    dataRepository.readName(name).map {
+      case data => Ok(Json.toJson(data))
+      case _ => NotFound(Json.toJson("Item not found"))
+    }.recover {
+      case ex: Exception => InternalServerError(Json.toJson("An unexpected error occurred"))
+    }
+  }
+
   def update(id: String): Action[JsValue] = Action.async(parse.json) { implicit request =>
     request.body.validate[DataModel] match {
       case JsSuccess(dataModel, _) =>
