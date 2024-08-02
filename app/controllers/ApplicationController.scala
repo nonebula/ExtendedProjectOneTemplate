@@ -65,6 +65,19 @@ class ApplicationController @Inject()(val dataRepository: DataRepository, val co
     }
   }
 
+  //return to and complete
+  //  def updateField(id: String, fieldName: String, newValue: JsValue): Action[AnyContent] = Action.async { implicit request =>
+  //    dataRepository.updateField(id, fieldName, newValue).map { result =>
+  //      if (result.getModifiedCount > 0) {
+  //        Ok(Json.toJson("Update successful"))
+  //      } else {
+  //        NotFound(Json.toJson("Document not found or no update occurred"))
+  //      }
+  //    }.recover {
+  //      case ex: Exception => InternalServerError(Json.toJson(s"Error updating document: ${ex.getMessage}"))
+  //    }
+  //  }
+
   def delete(id: String): Action[AnyContent] = Action.async { implicit request =>
     dataRepository.delete(id).map { result =>
       if (result.getDeletedCount > 0) {

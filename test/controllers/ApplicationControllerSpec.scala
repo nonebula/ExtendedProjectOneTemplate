@@ -122,7 +122,7 @@ class ApplicationControllerSpec extends BaseSpecWithApplication {
   //      val updatedDataModel: DataModel = dataModel.copy(name = "Updated Name")
   //      val updatedRequest: FakeRequest[JsValue] = buildPut("/api/${dataModel._id}").withBody[JsValue](Json.toJson(updatedDataModel))
   //      val updatedResult: Future[Result] = TestApplicationController.update(dataModel._id)(updatedRequest)
-  //
+
   //      status(updatedResult) shouldBe ACCEPTED
   //
   //      val readResult: Future[Result] = TestApplicationController.read(dataModel._id)(FakeRequest())
@@ -134,6 +134,36 @@ class ApplicationControllerSpec extends BaseSpecWithApplication {
   //  }
 
   //Make a bad request too
+
+
+  //Need to finish the test here but can't seem to work it.
+  //  "ApplicationController .updateField" should {
+  //    "update a book's field in the database" in {
+  //      beforeEach()
+  //
+  //      val request: FakeRequest[JsValue] = buildPost("/api").withBody(Json.toJson(dataModel))
+  //      val createdResult: Future[Result] = TestApplicationController.create()(request)
+  //      status(createdResult) shouldBe Status.CREATED
+  //
+  //      // Update the book's name field
+  //      val updatedFieldValue: JsValue = Json.toJson("Updated Name")
+  //      val updatedRequest: FakeRequest[JsValue] = buildPut(s"/api/${dataModel._id}/field/name").withBody(updatedFieldValue)
+  //      val updatedResult: Future[Result] = TestApplicationController.updateField(dataModel._id, "name", updatedFieldValue)(updatedRequest)
+  //
+  //      status(updatedResult) shouldBe ACCEPTED
+  //
+  //      // Read the updated book and verify the updated field
+  //      val readResult: Future[Result] = TestApplicationController.read(dataModel._id)(FakeRequest())
+  //      status(readResult) shouldBe OK
+  //
+  //      val expectedDataModel: DataModel = dataModel.copy(name = "Updated Name")
+  //      contentAsJson(readResult) shouldBe Json.toJson(expectedDataModel)
+  //
+  //      contentAsJson(readResult).as[JsValue] shouldBe Json.toJson(expectedDataModel)
+  //
+  //      afterEach()
+  //    }
+  //  }
 
 
   "ApplicationController .delete" should {

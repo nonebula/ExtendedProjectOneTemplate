@@ -1,10 +1,12 @@
 package repositories
 
+import com.mongodb.client.result.UpdateResult
 import models.{APIError, DataModel}
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model.Filters.empty
 import org.mongodb.scala.model._
 import org.mongodb.scala.result
+import play.api.libs.json.JsValue
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 
@@ -58,8 +60,17 @@ class DataRepository @Inject()(
     collection.replaceOne(
       filter = byID(id),
       replacement = book,
-      options = new ReplaceOptions().upsert(true) //What happens when we set this to false?
+      options = new ReplaceOptions().upsert(false) //What happens when we set this to false? When you set the upsert option to false, the replaceOne operation will only update an existing document and will not insert a new one if a document with the specified _id does not exist. This means that if there is no document with the given _id, the operation will fail and no document will be created.
     ).toFuture()
+
+  //Return to and complete
+  //  def updateField(id: String, fieldName: String, newValue: JsValue): Future[result.UpdateResult] = {
+  //    collection.updateOne(
+  //      filter = byID(id),
+  //      update = Updates.set(fieldName, newValue),
+  //      options = new UpdateOptions().upsert(false) // Ensures no document is created if the _id does not exist
+  //    ).toFuture()
+  //  }
 
   def delete(id: String): Future[result.DeleteResult] =
     collection.deleteOne(
