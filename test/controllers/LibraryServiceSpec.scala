@@ -38,9 +38,9 @@ class LibraryServiceSpec extends BaseSpec with MockFactory with ScalaFutures wit
     "return a book" in {
       (mockConnector.get[DataModel](_: String)(_: OFormat[DataModel], _: ExecutionContext))
         .expects(url, *, *)
-        .returning(EitherT.rightT(Future(gameOfThrones.as[DataModel])))
+        .returning(EitherT.right[APIError](Future.successful(gameOfThrones.as[DataModel])))
         .once()
-      //.value removed between ) and ) below
+
       whenReady(testService.getGoogleBook(urlOverride = Some(url), search = "", term = "").value) { result =>
         result shouldBe Right(GoogleBook("someId", "A Game of Thrones", "The best book!!!", 100))
       }
@@ -49,7 +49,7 @@ class LibraryServiceSpec extends BaseSpec with MockFactory with ScalaFutures wit
     "return an error" in {
       (mockConnector.get[DataModel](_: String)(_: OFormat[DataModel], _: ExecutionContext))
         .expects(url, *, *)
-        .returning(EitherT.leftT(Future.failed(new RuntimeException)))
+        .returning(EitherT.left[DataModel](Future.successful(APIError.BadAPIResponse(500, "Test exception"))))
         .once()
 
       whenReady(testService.getGoogleBook(urlOverride = Some(url), search = "", term = "").value) { result =>
