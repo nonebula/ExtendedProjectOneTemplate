@@ -19,16 +19,18 @@ class ApplicationController @Inject()(val dataRepository: DataRepository, val co
       case Right(item: Seq[DataModel]) => Ok(Json.toJson(item))
       case Left(error: APIError.BadAPIResponse) =>
         Status(error.httpResponseStatus)(Json.toJson(error.reason))
-      case Left(_) =>
-        InternalServerError(Json.toJson("Unable to find any books"))
+    }.recover {
+      case ex: Exception => InternalServerError(Json.toJson("An unexpected error occurred"))
     }
   }
 
   def create(): Action[JsValue] = Action.async(parse.json) { implicit request =>
     request.body.validate[DataModel] match {
       case JsSuccess(dataModel, _) =>
-        dataRepository.create(dataModel).map(_ => Created)
-      case JsError(_) => Future(BadRequest)
+        dataRepository.create(dataModel).map(_ => Created).recover {
+          case ex: Exception => InternalServerError(Json.toJson("Invalid JSON"))
+        }
+      case JsError(_) => Future.successful(BadRequest(Json.toJson("Invalid JSON")))
     }
   }
 
@@ -36,14 +38,21 @@ class ApplicationController @Inject()(val dataRepository: DataRepository, val co
     dataRepository.read(id).map {
       case data => Ok(Json.toJson(data))
       case _ => NotFound(Json.toJson("Item not found"))
+    }.recover {
+      case ex: Exception => InternalServerError(Json.toJson("An unexpected error occurred"))
     }
   }
 
   def update(id: String): Action[JsValue] = Action.async(parse.json) { implicit request =>
     request.body.validate[DataModel] match {
       case JsSuccess(dataModel, _) =>
-        dataRepository.update(id, dataModel).map(_ => Accepted)
-      case JsError(_) => Future(BadRequest)
+        dataRepository.update(id, dataModel).map {
+          case updateResult if updateResult.getModifiedCount > 0 => Accepted
+          case _ => NotFound(Json.toJson("Item not found or no changes made"))
+        }.recover {
+          case ex: Exception => InternalServerError(Json.toJson("An error occurred while updating."))
+        }
+      case JsError(_) => Future.successful(BadRequest(Json.toJson("Invalid JSON")))
     }
   }
 
@@ -52,10 +61,10 @@ class ApplicationController @Inject()(val dataRepository: DataRepository, val co
       if (result.getDeletedCount > 0) {
         Accepted
       } else {
-        Accepted
+        NotFound(Json.toJson("Item not found"))
       }
     }.recover {
-      case ex: Exception => InternalServerError(Json.toJson("Error deleting item"))
+      case ex: Exception => InternalServerError(Json.toJson("An error occurred while deleting the item"))
     }
   }
 
@@ -63,22 +72,21 @@ class ApplicationController @Inject()(val dataRepository: DataRepository, val co
   def getGoogleBook(search: String, term: String): Action[AnyContent] = Action.async { implicit request =>
     libraryService.getGoogleBook(search = search, term = term).value.map {
       case Right(book) => Ok(Json.toJson(book))
-      case Left(error) =>
-        error match {
-          case APIError.BadAPIResponse(_, _) =>
-            NotFound(Json.toJson("Book not found"))
-        }
+      case Left(APIError.BadAPIResponse(_, _)) => NotFound(Json.toJson("Book not found"))
+    }.recover {
+      case ex: Exception => InternalServerError(Json.toJson("An unexpected error occurred"))
     }
   }
-
-  //  def getGoogleBook(search: String, term: String): Action[AnyContent] = Action.async { implicit request =>
-  //    libraryService.getGoogleBook(search = search, term = term).map {
-  //      case Some(book) => Ok(Json.toJson(book))
-  //      case None => NotFound(Json.toJson("Book not found"))
-  //    }
-  //  }
-
 }
+
+//  def getGoogleBook(search: String, term: String): Action[AnyContent] = Action.async { implicit request =>
+//    libraryService.getGoogleBook(search = search, term = term).map {
+//      case Some(book) => Ok(Json.toJson(book))
+//      case None => NotFound(Json.toJson("Book not found"))
+//    }
+//  }
+
+
 
 
 
