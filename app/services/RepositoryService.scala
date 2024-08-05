@@ -19,26 +19,26 @@ class RepositoryService @Inject()(dataRepository: DataRepository)(implicit ec: E
     }
   }
 
-  def create(dataModel: DataModel): Future[DataModel] = {
-    dataRepository.create(dataModel)
+  def create(dataModel: DataModel): Future[Either[APIError, Unit]] = {
+    dataRepository.create(dataModel).map(_.map(_ => ()))
   }
 
-  def read(id: String): Future[Option[DataModel]] = {
+  def read(id: String): Future[Either[APIError, Option[DataModel]]] = {
     dataRepository.read(id)
   }
 
-  def readName(name: String): Future[Option[DataModel]] = {
+  def readName(name: String): Future[Either[APIError, Option[DataModel]]] = {
     dataRepository.readName(name)
   }
 
-  def update(id: String, book: DataModel): Future[UpdateResult] =
+  def update(id: String, book: DataModel): Future[Either[APIError, UpdateResult]] =
     dataRepository.update(id, book)
 
   //  def updateField(id: String, fieldName: String, newValue: JsValue): Future[UpdateResult] = {
   //    dataRepository.updateField(id, fieldName, newValue)
   //  }
 
-  def delete(id: String): Future[DeleteResult] = {
+  def delete(id: String): Future[Either[APIError, DeleteResult]] = {
     dataRepository.delete(id)
   }
 }

@@ -47,19 +47,17 @@ class ApplicationController @Inject()(val controllerComponents: ControllerCompon
 
   def read(id: String): Action[AnyContent] = Action.async { implicit request =>
     repositoryService.read(id).map {
-      case data => Ok(Json.toJson(data))
-      case _ => NotFound(Json.toJson("Item not found"))
-    }.recover {
-      case ex: Exception => InternalServerError(Json.toJson("An unexpected error occurred"))
+      case Right(Some(dataModel)) => Ok(Json.toJson(dataModel))
+      case Right(None) => NotFound(Json.toJson("Item not found"))
+      case Left(error) => InternalServerError(Json.toJson(error.reason))
     }
   }
 
   def readName(name: String): Action[AnyContent] = Action.async { implicit request =>
     repositoryService.readName(name).map {
-      case data => Ok(Json.toJson(data))
-      case _ => NotFound(Json.toJson("Item not found"))
-    }.recover {
-      case ex: Exception => InternalServerError(Json.toJson("An unexpected error occurred"))
+      case Right(Some(dataModel)) => Ok(Json.toJson(dataModel))
+      case Right(None) => NotFound(Json.toJson("Item not found"))
+      case Left(error) => InternalServerError(Json.toJson(error.reason))
     }
   }
 
@@ -67,15 +65,16 @@ class ApplicationController @Inject()(val controllerComponents: ControllerCompon
     request.body.validate[DataModel] match {
       case JsSuccess(dataModel, _) =>
         repositoryService.update(id, dataModel).map {
-          case updateResult if updateResult.getModifiedCount > 0 => Accepted
-          case _ => NotFound(Json.toJson("Item not found or no changes made"))
+          case Right(updateResult) if updateResult.getModifiedCount > 0 => Accepted
+          case Right(_) => NotFound(Json.toJson("Item not found or no changes made"))
+          case Left(error) => InternalServerError(Json.toJson(error.reason))
         }.recover {
           case ex: Exception => InternalServerError(Json.toJson("An error occurred while updating."))
         }
       case JsError(_) => Future.successful(BadRequest(Json.toJson("Invalid JSON")))
     }
   }
-
+  
   //return to and complete
   //  def updateField(id: String, fieldName: String, newValue: JsValue): Action[AnyContent] = Action.async { implicit request =>
   //    repositoryService.updateField(id, fieldName, newValue).map { result =>
@@ -90,12 +89,15 @@ class ApplicationController @Inject()(val controllerComponents: ControllerCompon
   //  }
 
   def delete(id: String): Action[AnyContent] = Action.async { implicit request =>
-    repositoryService.delete(id).map { result =>
-      if (result.getDeletedCount > 0) {
-        Accepted
-      } else {
-        NotFound(Json.toJson("Item not found"))
-      }
+    repositoryService.delete(id).map {
+      case Right(deleteResult) =>
+        if (deleteResult.getDeletedCount > 0) {
+          Accepted(Json.toJson("Item successfully deleted"))
+        } else {
+          NotFound(Json.toJson("Item not found"))
+        }
+      case Left(apiError) =>
+        Status(apiError.httpResponseStatus)(Json.toJson(apiError.reason))
     }.recover {
       case ex: Exception => InternalServerError(Json.toJson("An error occurred while deleting the item"))
     }
