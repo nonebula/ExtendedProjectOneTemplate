@@ -1,11 +1,12 @@
 package repositories
 
-import com.mongodb.client.result.UpdateResult
+import com.google.inject.ImplementedBy
+import com.mongodb.client.result.{DeleteResult, UpdateResult}
 import models.{APIError, DataModel}
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model.Filters.empty
 import org.mongodb.scala.model._
-import org.mongodb.scala.result
+import org.mongodb.scala.{MongoCollection, result}
 import play.api.libs.json.JsValue
 import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
@@ -13,18 +14,34 @@ import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
+@ImplementedBy(classOf[DataRepository])
+trait DataRepositoryTrait {
+  def index(): Future[Either[APIError, Seq[DataModel]]]
+
+  def create(dataModel: DataModel): Future[Either[APIError, DataModel]]
+
+  def read(id: String): Future[Either[APIError, Option[DataModel]]]
+
+  def readName(name: String): Future[Either[APIError, Option[DataModel]]]
+
+  def update(id: String, book: DataModel): Future[Either[APIError, UpdateResult]]
+
+  def delete(id: String): Future[Either[APIError, DeleteResult]]
+}
+
 @Singleton
-class DataRepository @Inject()(
-                                mongoComponent: MongoComponent
-                              )(implicit ec: ExecutionContext) extends PlayMongoRepository[DataModel](
-  collectionName = "dataModels",
-  mongoComponent = mongoComponent,
-  domainFormat = DataModel.formats,
-  indexes = Seq(IndexModel(
-    Indexes.ascending("_id")
-  )),
-  replaceIndexes = false
-) {
+class DataRepository @Inject()(collection: MongoCollection[DataModel])(implicit ec: ExecutionContext) extends DataRepositoryTrait {
+
+  //                                mongoComponent: MongoComponent
+  //                              )(implicit ec: ExecutionContext) extends PlayMongoRepository[DataModel](
+  //  collectionName = "dataModels",
+  //  mongoComponent = mongoComponent,
+  //  domainFormat = DataModel.formats,
+  //  indexes = Seq(IndexModel(
+  //    Indexes.ascending("_id")
+  //  )),
+  //  replaceIndexes = false
+  //) {
 
   def index(): Future[Either[APIError, Seq[DataModel]]] = {
     collection.find().toFuture().map {

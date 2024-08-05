@@ -15,8 +15,8 @@ import scala.concurrent.{ExecutionContext, Future}
 class LibraryServiceSpec extends BaseSpec with MockFactory with ScalaFutures with GuiceOneAppPerSuite {
 
   implicit val executionContext: ExecutionContext = app.injector.instanceOf[ExecutionContext]
-  val mockConnector: LibraryConnector = mock[LibraryConnector]
-  val testService = new LibraryService(mockConnector)
+  private val mockConnector: LibraryConnector = mock[LibraryConnector]
+  private val testService = new LibraryService(mockConnector)
 
   implicit val dataModelFormat: OFormat[DataModel] = Json.format[DataModel]
 
@@ -32,7 +32,6 @@ class LibraryServiceSpec extends BaseSpec with MockFactory with ScalaFutures wit
 
   "getGoogleBook" should {
     val url: String = "testUrl"
-
     "return a book" in {
       (mockConnector.get[DataModel](_: String)(_: OFormat[DataModel], _: ExecutionContext))
         .expects(url, *, *)
