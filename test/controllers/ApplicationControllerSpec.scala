@@ -43,9 +43,14 @@ class ApplicationControllerSpec extends BaseSpecWithApplication {
 
       afterEach()
     }
-  }
 
-  //Make a bad request too
+    "return a BadRequest for invalid JSON" in {
+      val invalidRequest: FakeRequest[JsValue] = buildPost("/api").withBody(Json.obj("invalid" -> "data"))
+      val result: Future[Result] = TestApplicationController.create()(invalidRequest)
+
+      status(result) shouldBe Status.BAD_REQUEST
+    }
+  }
 
 
   "ApplicationController .read" should {
@@ -64,11 +69,12 @@ class ApplicationControllerSpec extends BaseSpecWithApplication {
 
       afterEach()
     }
+    "return NotFound if the book is not found" in {
+      val readResult: Future[Result] = TestApplicationController.read("nonexistent_id")(FakeRequest())
+
+      status(readResult) shouldBe Status.NOT_FOUND
+    }
   }
-
-
-  //Make a bad request too
-
 
   "ApplicationController .readName" should {
 
@@ -85,6 +91,12 @@ class ApplicationControllerSpec extends BaseSpecWithApplication {
       contentAsJson(readResult) shouldBe Json.toJson(dataModel)
 
       afterEach()
+    }
+
+    "return NotFound if the book by name is not found" in {
+      val readResult: Future[Result] = TestApplicationController.readName("Nonexistent Name")(FakeRequest())
+
+      status(readResult) shouldBe Status.NOT_FOUND
     }
   }
 
@@ -108,6 +120,20 @@ class ApplicationControllerSpec extends BaseSpecWithApplication {
       contentAsJson(readResult) shouldBe Json.toJson(updatedDataModel)
 
       afterEach()
+    }
+    "return NotFound if the book to update is not found" in {
+      val updatedDataModel: DataModel = dataModel.copy(name = "Updated Name")
+      val updatedRequest: FakeRequest[JsValue] = buildPut(s"/api/nonexistent_id").withBody(Json.toJson(updatedDataModel))
+      val updatedResult: Future[Result] = TestApplicationController.update("nonexistent_id")(updatedRequest)
+
+      status(updatedResult) shouldBe Status.NOT_FOUND
+    }
+
+    "return BadRequest for invalid JSON" in {
+      val invalidRequest: FakeRequest[JsValue] = buildPut(s"/api/${dataModel._id}").withBody(Json.obj("invalid" -> "data"))
+      val result: Future[Result] = TestApplicationController.update(dataModel._id)(invalidRequest)
+
+      status(result) shouldBe Status.BAD_REQUEST
     }
   }
 
@@ -180,6 +206,12 @@ class ApplicationControllerSpec extends BaseSpecWithApplication {
       status(deletedResult) shouldBe ACCEPTED
 
       afterEach()
+    }
+    "return NotFound if the book to delete is not found" in {
+      val deleteRequest: FakeRequest[AnyContent] = buildDelete("/api/nonexistent_id")
+      val deletedResult: Future[Result] = TestApplicationController.delete("nonexistent_id")(deleteRequest)
+
+      status(deletedResult) shouldBe Status.NOT_FOUND
     }
   }
 
