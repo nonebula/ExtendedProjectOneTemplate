@@ -11,7 +11,6 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class LibraryService @Inject()(connector: LibraryConnector)(implicit ec: ExecutionContext) {
   def getGoogleBook(urlOverride: Option[String] = None, search: String, term: String): EitherT[Future, APIError, GoogleBook] = {
-
     val url = urlOverride.getOrElse(s"https://www.googleapis.com/books/v1/volumes?q=$search%$term")
     val returnedBook: EitherT[Future, APIError, DataModel] = connector.get[DataModel](url)
 
@@ -25,5 +24,3 @@ class LibraryService @Inject()(connector: LibraryConnector)(implicit ec: Executi
     }
   }
 }
-
-
