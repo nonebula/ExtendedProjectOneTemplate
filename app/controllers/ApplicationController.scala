@@ -18,13 +18,6 @@ class ApplicationController @Inject()(val controllerComponents: ControllerCompon
 
   //  Your ApplicationController methods should call those in the service layer
 
-  //  def index(): Action[AnyContent] = Action.async { implicit request =>
-  //    repositoryService.readAll().map {
-  //      case Right(items) => Ok(Json.toJson(items))
-  //      case Left(error) => Status(error.httpResponseStatus)(Json.toJson(error.reason))
-  //    }
-  //  }
-
   def index(): Action[AnyContent] = Action.async { implicit request =>
     repositoryService.readAll().map {
       case Right(item: Seq[DataModel]) => Ok(Json.toJson(item))
@@ -74,19 +67,6 @@ class ApplicationController @Inject()(val controllerComponents: ControllerCompon
       case JsError(_) => Future.successful(BadRequest(Json.toJson("Invalid JSON")))
     }
   }
-  
-  //return to and complete
-  //  def updateField(id: String, fieldName: String, newValue: JsValue): Action[AnyContent] = Action.async { implicit request =>
-  //    repositoryService.updateField(id, fieldName, newValue).map { result =>
-  //      if (result.getModifiedCount > 0) {
-  //        Ok(Json.toJson("Update successful"))
-  //      } else {
-  //        NotFound(Json.toJson("Document not found or no update occurred"))
-  //      }
-  //    }.recover {
-  //      case ex: Exception => InternalServerError(Json.toJson(s"Error updating document: ${ex.getMessage}"))
-  //    }
-  //  }
 
   def delete(id: String): Action[AnyContent] = Action.async { implicit request =>
     repositoryService.delete(id).map {
@@ -114,14 +94,19 @@ class ApplicationController @Inject()(val controllerComponents: ControllerCompon
   }
 }
 
-//  def getGoogleBook(search: String, term: String): Action[AnyContent] = Action.async { implicit request =>
-//    libraryService.getGoogleBook(search = search, term = term).map {
-//      case Some(book) => Ok(Json.toJson(book))
-//      case None => NotFound(Json.toJson("Book not found"))
+
+
+
+//TODO
+//return to and complete
+//  def updateField(id: String, fieldName: String, newValue: JsValue): Action[AnyContent] = Action.async { implicit request =>
+//    repositoryService.updateField(id, fieldName, newValue).map { result =>
+//      if (result.getModifiedCount > 0) {
+//        Ok(Json.toJson("Update successful"))
+//      } else {
+//        NotFound(Json.toJson("Document not found or no update occurred"))
+//      }
+//    }.recover {
+//      case ex: Exception => InternalServerError(Json.toJson(s"Error updating document: ${ex.getMessage}"))
 //    }
 //  }
-
-
-
-
-

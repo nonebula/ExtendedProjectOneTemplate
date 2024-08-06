@@ -3,12 +3,12 @@ package services
 import cats.data.EitherT
 import models.{APIError, DataModel, GoogleBook}
 import org.mongodb.scala.result.{DeleteResult, UpdateResult}
-import repositories.{DataRepository, DataRepositoryTrait}
+import repositories.{DataRepository, MockDataRepository}
 
 import scala.concurrent.{ExecutionContext, Future}
 import javax.inject.Inject
 
-class RepositoryService @Inject()(dataRepository: DataRepositoryTrait)(implicit ec: ExecutionContext) {
+class RepositoryService @Inject()(dataRepository: MockDataRepository)(implicit ec: ExecutionContext) {
 
   def readAll(): Future[Either[APIError, Seq[DataModel]]] = {
     dataRepository.index().map {

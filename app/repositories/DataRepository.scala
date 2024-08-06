@@ -15,7 +15,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @ImplementedBy(classOf[DataRepository])
-trait DataRepositoryTrait {
+trait MockDataRepository {
   def index(): Future[Either[APIError, Seq[DataModel]]]
 
   def create(dataModel: DataModel): Future[Either[APIError, DataModel]]
@@ -30,18 +30,15 @@ trait DataRepositoryTrait {
 }
 
 @Singleton
-class DataRepository @Inject()(collection: MongoCollection[DataModel])(implicit ec: ExecutionContext) extends DataRepositoryTrait {
-
-  //                                mongoComponent: MongoComponent
-  //                              )(implicit ec: ExecutionContext) extends PlayMongoRepository[DataModel](
-  //  collectionName = "dataModels",
-  //  mongoComponent = mongoComponent,
-  //  domainFormat = DataModel.formats,
-  //  indexes = Seq(IndexModel(
-  //    Indexes.ascending("_id")
-  //  )),
-  //  replaceIndexes = false
-  //) {
+class DataRepository @Inject()(mongoComponent: MongoComponent)(implicit ec: ExecutionContext) extends PlayMongoRepository(
+  collectionName = "dataModels",
+  mongoComponent = mongoComponent,
+  domainFormat = DataModel.formats,
+  indexes = Seq(IndexModel(
+    Indexes.ascending("_id")
+  )),
+  replaceIndexes = false
+) with MockDataRepository {
 
   def index(): Future[Either[APIError, Seq[DataModel]]] = {
     collection.find().toFuture().map {
@@ -103,16 +100,6 @@ class DataRepository @Inject()(collection: MongoCollection[DataModel])(implicit 
         Left(APIError.DatabaseError(s"Failed to update book with id $id", Some(ex)))
     }
 
-
-  //Return to and complete
-  //  def updateField(id: String, fieldName: String, newValue: JsValue): Future[result.UpdateResult] = {
-  //    collection.updateOne(
-  //      filter = byID(id),
-  //      update = Updates.set(fieldName, newValue),
-  //      options = new UpdateOptions().upsert(false) // Ensures no document is created if the _id does not exist
-  //    ).toFuture()
-  //  }
-
   def delete(id: String): Future[Either[APIError, result.DeleteResult]] = {
     collection.deleteOne(byID(id)).toFuture().map(Right(_)).recover {
       case ex: Exception => Left(APIError.DatabaseError(s"Failed to delete book with id $id", Some(ex)))
@@ -122,3 +109,16 @@ class DataRepository @Inject()(collection: MongoCollection[DataModel])(implicit 
   def deleteAll(): Future[Unit] = collection.deleteMany(empty()).toFuture().map(_ => ()) //Hint: needed for tests
 
 }
+
+
+
+
+
+//Return to and complete
+//  def updateField(id: String, fieldName: String, newValue: JsValue): Future[result.UpdateResult] = {
+//    collection.updateOne(
+//      filter = byID(id),
+//      update = Updates.set(fieldName, newValue),
+//      options = new UpdateOptions().upsert(false) // Ensures no document is created if the _id does not exist
+//    ).toFuture()
+//  }
