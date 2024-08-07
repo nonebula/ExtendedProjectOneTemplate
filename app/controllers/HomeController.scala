@@ -1,7 +1,5 @@
 package controllers
 
-//controllers here
-
 import play.api.mvc._
 
 import javax.inject.{Inject, Singleton}
