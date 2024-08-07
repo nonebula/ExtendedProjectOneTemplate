@@ -1,9 +1,8 @@
 package services
 
-import cats.data.EitherT
 import models.{APIError, DataModel, GoogleBook}
 import org.mongodb.scala.result.{DeleteResult, UpdateResult}
-import repositories.{DataRepository, MockDataRepository}
+import repositories.{MockDataRepository}
 
 import scala.concurrent.{ExecutionContext, Future}
 import javax.inject.Inject
@@ -31,10 +30,6 @@ class RepositoryService @Inject()(dataRepository: MockDataRepository)(implicit e
 
   def update(id: String, book: DataModel): Future[Either[APIError, UpdateResult]] =
     dataRepository.update(id, book)
-
-  //  def updateField(id: String, fieldName: String, newValue: JsValue): Future[UpdateResult] = {
-  //    dataRepository.updateField(id, fieldName, newValue)
-  //  }
 
   def delete(id: String): Future[Either[APIError, DeleteResult]] = {
     dataRepository.delete(id)

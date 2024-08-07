@@ -21,10 +21,4 @@ object APIError {
       s"Database error occurred: $message"
     )
 
-  final case class NotFoundError(message: String)
-    extends APIError(
-      Status.NOT_FOUND,
-      s"Resource not found: $message"
-    )
-
 }
