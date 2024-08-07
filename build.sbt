@@ -19,6 +19,7 @@ lazy val root = (project in file("."))
   .enablePlugins(PlayScala)
 
 libraryDependencies += ws
+libraryDependencies += ("org.typelevel" %% "cats-core" % "2.3.0")
 
 //"com.typesafe.play" %% "play" % "2.8.16",
 //"com.typesafe.play" %% "play-json" % "2.9.4",
