@@ -19,6 +19,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class ApplicationControllerSpec extends BaseSpecWithApplication {
 
   val TestApplicationController = new ApplicationController(
+
     component,
     service,
     repoService
@@ -60,6 +61,7 @@ class ApplicationControllerSpec extends BaseSpecWithApplication {
 
       val request: FakeRequest[JsValue] = buildGet(s"/api/${dataModel._id}").withBody(Json.toJson(dataModel))
       val createdResult: Future[Result] = TestApplicationController.create()(request)
+      
       status(createdResult) shouldBe Status.CREATED
 
       val readResult: Future[Result] = TestApplicationController.read(dataModel._id)(FakeRequest())
@@ -99,7 +101,6 @@ class ApplicationControllerSpec extends BaseSpecWithApplication {
       status(readResult) shouldBe Status.NOT_FOUND
     }
   }
-
 
   "ApplicationController .update" should {
     "update a book in the database" in {
@@ -233,6 +234,7 @@ class ApplicationControllerSpec extends BaseSpecWithApplication {
   //  }
 
   //Make a bad request too
+
 
 
   override def beforeEach(): Unit = await(repository.deleteAll())

@@ -92,7 +92,6 @@ class ApplicationController @Inject()(val controllerComponents: ControllerCompon
       case ex: Exception => InternalServerError(Json.toJson("An unexpected error occurred"))
     }
   }
-
 }
 
 
