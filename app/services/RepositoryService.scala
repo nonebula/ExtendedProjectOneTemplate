@@ -39,4 +39,11 @@ class RepositoryService @Inject()(dataRepository: MockDataRepository)(implicit e
   def delete(id: String): Future[Either[APIError, DeleteResult]] = {
     dataRepository.delete(id)
   }
+
+  //  Use the html files in the views package to display at least one book from the Google Books API. Do this by
+  //  using the connector to retrieve the book by searching for the isbn in the url (you may have to change the structure of dataModels),
+  //  store the book in Mongo to show you have it
+  //  then display the book in your browser by returning the JSON of your book model
+  //  call made at browser url → controller → service → connector → Google Books → connector → service → views → service → controller
+
 }

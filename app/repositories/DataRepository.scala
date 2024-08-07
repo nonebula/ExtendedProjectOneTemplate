@@ -108,6 +108,7 @@ class DataRepository @Inject()(mongoComponent: MongoComponent)(implicit ec: Exec
 
   def deleteAll(): Future[Unit] = collection.deleteMany(empty()).toFuture().map(_ => ()) //Hint: needed for tests
 
+
 }
 
 
